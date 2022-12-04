@@ -16,10 +16,10 @@ import plotly.graph_objs as go
 
 a = 1  # constant from wave equation
 l = 1  # length of the kernel
-alpha = 0.001  # u(c,0)
-accuracy = 1e-4
+alpha = 0.01  # u(c,0)
+accuracy = 1e-10
 
-x_array = np.linspace(0, l, 1000)  # "x" array with 1000 elements from 0 to l
+x_array = np.linspace(0, l, 100)  # "x" array with 1000 elements from 0 to l
 
 
 def mu_value(n):
@@ -57,7 +57,7 @@ def a_coefficient(n):
 
 
 def b_coefficient(n):
-    return l ** 3 / (a * mu_value(n) ** 2 * integral_square_of_norma(n))
+    return 0
 
 
 def answer(x, t, n):
