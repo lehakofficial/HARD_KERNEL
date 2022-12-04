@@ -16,7 +16,7 @@ import plotly.graph_objs as go
 
 a = 1  # constant from wave equation
 l = 1  # length of the kernel
-alpha = 0.01  # u(c,0)
+alpha = 0.001  # u(c,0)
 accuracy = 1e-4
 
 x_array = np.linspace(0, l, 1000)  # "x" array with 1000 elements from 0 to l
@@ -31,26 +31,38 @@ def mu_value(n):
         return pi / 2 * (2 * n - 1)
 
 
-def hyperbolic_function(x, n):
+def beta_value(x, n):
     arg = mu_value(n) / l * x
     first_bracket = ch(mu_value(n)) + cos(mu_value(n))
     second_bracket = sh(arg) - sin(arg)
     third_bracket = sh(mu_value(n)) + sin(mu_value(n))
     fourth_bracket = ch(arg) - cos(arg)
-    return alpha * x ** 2 * (first_bracket * second_bracket - third_bracket * fourth_bracket)
+    return first_bracket * second_bracket - third_bracket * fourth_bracket
+
+
+def square_of_norma(x, n):
+    return abs(beta_value(x, n)) ** 2
+
+
+def integral_square_of_norma(n):
+    return integrate.quad(square_of_norma, 0, l, args=(n,))[0]
+
+
+def function_to_integrate_in_a(x, n):
+    return x ** 2 * beta_value(x, n)
 
 
 def a_coefficient(n):
-    return 2 / l * integrate.quad(hyperbolic_function, 0, l, args=(n,))[0]
+    return alpha * integrate.quad(function_to_integrate_in_a, 0, l, args=(n,))[0] / integral_square_of_norma(n)
 
 
 def b_coefficient(n):
-    return 2 * l ** 2 / (a * mu_value(n) ** 2)
+    return l ** 3 / (a * mu_value(n) ** 2 * integral_square_of_norma(n))
 
 
 def answer(x, t, n):
-    return hyperbolic_function(x, n) / (alpha * x ** 2) * (a_coefficient(n) * cos((mu_value(n) / l) ** 2 * a * t) +
-                                                           b_coefficient(n) * cos((mu_value(n) / l) ** 2 * a * t))
+    return beta_value(x, n) * (a_coefficient(n) * cos((mu_value(n) / l) ** 2 * a * t) +
+                               b_coefficient(n) * cos((mu_value(n) / l) ** 2 * a * t))
 
 
 def sum_of_n(x, t):
@@ -97,5 +109,4 @@ def get_figure(x, t):
     fig.show()
 
 
-get_figure(x=x_array, t=np.linspace(0, 1, 2))
-# print(a_coefficient(3))
+get_figure(x=x_array, t=np.linspace(0, 1, 3))
