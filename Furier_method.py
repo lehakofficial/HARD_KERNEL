@@ -14,11 +14,10 @@ from scipy import integrate
 import numpy as np
 import plotly.graph_objs as go
 
-a = 1  # constant from wave equation
-l = 1  # length of the kernel
-alpha = 0.01  # u(c,0)
-accuracy = 1e-5
-# a = 2e11 * l ** 2 / (3 * 7800 * pi * 0.017)
+# a = 1  # constant from wave equation
+l = 0.12  # length of the kernel
+alpha = 1  # u(c,0)
+a = 2e11 * l ** 2 / (3 * 7800 * pi * 0.017)
 
 
 def mu_value(n):
@@ -40,7 +39,7 @@ def beta_value(x, n):
 
 
 def square_of_norma(x, n):
-    return abs(beta_value(x, n)) ** 2
+    return beta_value(x, n) ** 2
 
 
 def integral_square_of_norma(n):
@@ -49,6 +48,53 @@ def integral_square_of_norma(n):
 
 def function_to_integrate_in_a(x, n):
     return x ** 2 * beta_value(x, n)
+
+
+def integral_for_a(n):
+    summa = 0
+    x_array = np.linspace(0, l, 1000)
+    diff = x_array[1] - x_array[0]
+    for x in x_array:
+        summa += x ** 2 * beta_value(x, n) * diff
+    return summa
+
+
+def i1(x, n):
+    arg = mu_value(n) / l * x
+    first_bracket = ch(mu_value(n)) + cos(mu_value(n))
+    return x ** 2 * first_bracket * sh(arg)
+
+
+def i2(x, n):
+    arg = mu_value(n) / l * x
+    first_bracket = ch(mu_value(n)) + cos(mu_value(n))
+    return x ** 2 * first_bracket * sin(arg)
+
+
+def i3(x, n):
+    arg = mu_value(n) / l * x
+    third_bracket = sh(mu_value(n)) + sin(mu_value(n))
+    return x ** 2 * third_bracket * ch(arg)
+
+
+def i4(x, n):
+    arg = mu_value(n) / l * x
+    third_bracket = sh(mu_value(n)) + sin(mu_value(n))
+    return x ** 2 * third_bracket * cos(arg)
+
+
+def integral_of_four(n):
+    return integrate.quad(i1, 0, l, args=(n,))[0] - integrate.quad(i2, 0, l, args=(n,))[0] - \
+           integrate.quad(i3, 0, l, args=(n,))[0] + integrate.quad(i4, 0, l, args=(n,))[0]
+
+
+def norma_with_summ(n):
+    summa = 0
+    x_array = np.linspace(0, l, 10000)
+    diff = x_array[1] - x_array[0]
+    for x in x_array:
+        summa += beta_value(x, n) ** 2 * diff
+    return summa
 
 
 def a_coefficient(n):
@@ -64,16 +110,12 @@ def sum_of_n(x, t):
     вычисляет сумму функции answer
     :return:
     """
-    n = 1
-    row_component = answer(x, t, n)
-    # print(function)
     summa = 0
-    while abs(row_component) > accuracy:
-        summa += row_component
+    for n in range(1, 8):
+        summa += answer(x, t, n)
         n += 1
-        row_component = answer(x, t, n)
         # print(f'function {n} = {function}')
-    # print(f'summ = {summ}')
+    # print(f'summ = {summa}')
     # print(f'{n} iterations for summ')
     return summa
 
@@ -85,8 +127,11 @@ def u(x, t):
     :return: numpy array with u(x,t)
     """
     u_array = np.array([])
+    n = 0
     for x_coordinate in x:
         u_array = np.append(u_array, sum_of_n(x_coordinate, t))
+        n += 1
+        print(n)
     return u_array
 
 
@@ -94,7 +139,7 @@ def get_figure(x, t):
     """
 
     :param x: numppy array with x coordinate
-    :param t: time tuple
+    :param t: iterable object with time values
     :return:
     """
     fig = go.Figure()
@@ -103,4 +148,8 @@ def get_figure(x, t):
     fig.show()
 
 
-get_figure(x=np.linspace(0, l, 1000), t=np.linspace(0, 1, 2))
+# get_figure(x=np.linspace(0, l, 100), t=np.linspace(0, 1, 2))
+get_figure(x=np.linspace(0, l, 100), t=np.linspace(0, 1e-8, 100))
+# j = 15
+# print(integral_for_a(j))
+# print(integrate.quad(function_to_integrate_in_a, 0, l, args=(j,))[0])
