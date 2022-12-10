@@ -56,7 +56,7 @@ def sum_of_n(x, t):
     summa = 0
     for n in range(1, 8):
         summa += answer(x, t, n)
-        n += 1
+        # n += 1
     return summa
 
 
