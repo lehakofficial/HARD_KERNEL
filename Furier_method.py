@@ -89,6 +89,10 @@ def get_figure(x, t):
     fig = go.Figure()
     for time in t:
         fig.add_trace(go.Scatter(x=x, y=u(x, time), name=f't = {time} секунд'))
+    fig.update_layout(title="Аналитическое решение",
+                      xaxis_title="x, м",
+                      yaxis_title="y, м",
+                      margin=dict(l=0, r=30, t=30, b=0))
     fig.show()
 
 

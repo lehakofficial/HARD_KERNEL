@@ -13,7 +13,7 @@ y = np.array([])  # array with y(n, i) values
 N = int(t / tau) + 1  # amount of time nodes of the mesh : 11 now
 
 # matrix coefficients
-A = a ** 2 * tau ** 2 / h ** 4  # TODO: replace with 1 to avoid errors
+A = a ** 2 * tau ** 2 / h ** 4
 B = - 4 * A
 C = 1 + 6 * A
 D = - 4 * A
@@ -68,4 +68,8 @@ for n in range(2, N):
 fig = go.Figure()
 for n in range(N):
     fig.add_trace(go.Scatter(x=x_arr, y=y[n], name=f't = {n * tau} секунд'))
+fig.update_layout(title="Численное решение",
+                  xaxis_title="x, м",
+                  yaxis_title="y, м",
+                  margin=dict(l=0, r=30, t=30, b=0))
 fig.show()
