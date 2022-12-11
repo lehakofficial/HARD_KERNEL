@@ -8,10 +8,14 @@ from scipy import integrate
 import numpy as np
 import plotly.graph_objs as go
 
-# a = 1  # constant from wave equation
-l = 0.12  # length of the kernel
-alpha = 0.01  # u(c,0)
-a = 2e11 * l ** 2 / (3 * 7800 * pi * 0.017)
+alpha = 0.01
+length = 1  # length of the kernel
+a = 1
+time = 1  # time for modeling
+h = 1e-2  # x-axis step of the mesh
+tau = 1e-1  # time step of the mesh
+M = int(length / h) + 1  # amount of x-axis nodes of the mesh : 11 now
+N = int(time / tau) + 1  # amount of time nodes of the mesh : 11 now
 
 
 def mu_value(n):
@@ -24,7 +28,7 @@ def mu_value(n):
 
 
 def beta_value(x, n):
-    arg = mu_value(n) / l * x
+    arg = mu_value(n) / length * x
     first_bracket = ch(mu_value(n)) + cos(mu_value(n))
     second_bracket = sh(arg) - sin(arg)
     third_bracket = sh(mu_value(n)) + sin(mu_value(n))
@@ -45,7 +49,7 @@ def a_coefficient(n):
 
 
 def answer(x, t, n):
-    return beta_value(x, n) * a_coefficient(n) * cos((mu_value(n) / l) ** 2 * a * t)
+    return beta_value(x, n) * a_coefficient(n) * cos((mu_value(n) / length) ** 2 * a * t)
 
 
 def sum_of_n(x, t):
@@ -91,9 +95,9 @@ def get_figure(x, t):
 time_1 = datetime.datetime.now()
 integral_square_of_norma = []
 for i in range(1, 20):
-    integral_square_of_norma.append(integrate.quad(square_of_norma, 0, l, args=(i,))[0])
+    integral_square_of_norma.append(integrate.quad(square_of_norma, 0, length, args=(i,))[0])
 integral = []
 for i in range(1, 20):
-    integral.append(integrate.quad(function_to_integrate_in_a, 0, l, args=(i,))[0])
-get_figure(x=np.linspace(0, l, 100), t=np.linspace(0, 1, 10000))
+    integral.append(integrate.quad(function_to_integrate_in_a, 0, length, args=(i,))[0])
+get_figure(x=np.linspace(0, length, M), t=np.linspace(0, time, N))
 print(datetime.datetime.now() - time_1)
