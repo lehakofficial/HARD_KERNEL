@@ -133,9 +133,9 @@ def calculate_integrals(square_of_norma_list, integral_list):
     """
 
     for i in range(1, 20):
-        integral_square_of_norma.append(integrate.quad(square_of_norma, 0, length, args=(i,))[0])
+        square_of_norma_list.append(integrate.quad(square_of_norma, 0, length, args=(i,))[0])
     for i in range(1, 20):
-        integral.append(integrate.quad(function_to_integrate_in_a, 0, length, args=(i,))[0])
+        integral_list.append(integrate.quad(function_to_integrate_in_a, 0, length, args=(i,))[0])
 
 
 time_1 = datetime.datetime.now()
