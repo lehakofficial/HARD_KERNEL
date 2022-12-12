@@ -1,13 +1,12 @@
 import numpy as np
 import plotly.graph_objs as go
-from math import pi
 
 alpha = 0.01
 length = 1  # length of the kernel
 a = 1
 t = 1  # time for modeling
 h = 1e-2  # x-axis step of the mesh
-tau = 1e-1  # time step of the mesh
+tau = 1e-2  # time step of the mesh
 M = int(length / h) + 1  # amount of x-axis nodes of the mesh : 11 now
 y = np.array([])  # array with y(n, i) values
 N = int(t / tau) + 1  # amount of time nodes of the mesh : 11 now
